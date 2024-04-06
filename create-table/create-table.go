@@ -12,15 +12,19 @@ import (
 func main() {
 	// Initialize a session in us-west-2 that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials.
+	region := "us-east-1"
 	sess, err := session.NewSession(&aws.Config{
-		Region:   aws.String("us-west-2"),
-		Endpoint: aws.String("http://localhost:8000"),
+		Region: aws.String(region),
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	// Create DynamoDB client
 	svc := dynamodb.New(sess)
 
 	// Create table Movies
+	table := "Miguel-Test-CLI-Go"
 	input := &dynamodb.CreateTableInput{
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
 			{
@@ -46,7 +50,7 @@ func main() {
 			ReadCapacityUnits:  aws.Int64(10),
 			WriteCapacityUnits: aws.Int64(10),
 		},
-		TableName: aws.String("Movies"),
+		TableName: aws.String(table),
 	}
 
 	_, err = svc.CreateTable(input)
@@ -57,5 +61,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Created the table Movies in us-west-2")
+	fmt.Printf("Created the table %v in %v\n", table, region)
 }

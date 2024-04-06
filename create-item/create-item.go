@@ -26,10 +26,15 @@ type Item struct {
 func main() {
 	// Initialize a session in us-west-2 that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials.
+	region := "us-east-1"
+	table := "Miguel-Test-CLI-Go"
 	sess, err := session.NewSession(&aws.Config{
-		Region:   aws.String("us-west-2"),
-		Endpoint: aws.String("http://localhost:8000"),
+		Region: aws.String(region),
 	})
+
+	if err != nil {
+		panic(err)
+	}
 
 	// Create DynamoDB client
 	svc := dynamodb.New(sess)
@@ -56,7 +61,7 @@ func main() {
 	// Create item in table Movies
 	input := &dynamodb.PutItemInput{
 		Item:      av,
-		TableName: aws.String("Movies"),
+		TableName: aws.String(table),
 	}
 
 	_, err = svc.PutItem(input)
@@ -67,5 +72,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Successfully added 'The Big New Movie' (2015) to Movies table")
+	fmt.Printf("Successfully inserted to %v table\n", table)
 }
